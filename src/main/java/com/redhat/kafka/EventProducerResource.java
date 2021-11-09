@@ -2,6 +2,7 @@ package com.redhat.kafka;
 
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -15,6 +16,7 @@ import org.eclipse.microprofile.reactive.messaging.Emitter;
 @Path("/event")
 public class EventProducerResource {
 
+    @Inject
     @Channel("event-input-topic")
     Emitter<Event> eventGenerator;
 
@@ -22,7 +24,7 @@ public class EventProducerResource {
     @Path("/send")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response sendEvent(Event item) {
-        
+
         if (item.event_timestamp() == null) {
             return Response.status(Status.BAD_REQUEST).build();
         }
@@ -34,7 +36,6 @@ public class EventProducerResource {
             return Response.status(Status.INTERNAL_SERVER_ERROR).build();
         }
         
-        System.out.println(item.toString());
         return Response.ok().build();
     }
 }

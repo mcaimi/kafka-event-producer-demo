@@ -16,10 +16,9 @@ public class Event {
     private String message;
     private EVENT_SEVERITY severity;
     private Long event_timestamp;
-    private Long ingestion_timestamp;
+    private Long ingestion_timestamp = 0L;
 
     // constructors
-    public Event() { }
     public Event(String id, String message, EVENT_SEVERITY severity, Long event_timestamp) {
         this.id = UUID.fromString(id);
         this.message = message;
