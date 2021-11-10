@@ -1,176 +1,105 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>event-producer - 1.0.0-SNAPSHOT</title>
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title>Quarkus Reactive Messaging - Kafka Demo</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/wingcss/0.1.8/wing.min.css"/>
     <style>
-        h1, h2, h3, h4, h5, h6 {
-            margin-bottom: 0.5rem;
-            font-weight: 400;
-            line-height: 1.5;
-        }
-
-        h1 {
-            font-size: 2.5rem;
-        }
-
-        h2 {
-            font-size: 2rem
-        }
-
-        h3 {
-            font-size: 1.75rem
-
-        }
-
-        h4 {
-            font-size: 1.5rem
-        }
-
-        h5 {
-            font-size: 1.25rem
-        }
-
-        h6 {
-            font-size: 1rem
-        }
-
-        .lead {
-            font-weight: 300;
-            font-size: 2rem;
-        }
-
-        .banner {
-            font-size: 2.7rem;
-            margin: 0;
-            padding: 2rem 1rem;
-            background-color: #0d1c2c;
-            color: white;
-        }
-
-        body {
-            margin: 0;
-            font-family: -apple-system, system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-        }
-
-        code {
-            font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-            font-size: 87.5%;
-            color: #e83e8c;
-            word-break: break-word;
-        }
-
-        .left-column {
-            padding: .75rem;
-            max-width: 75%;
-            min-width: 55%;
-        }
-
-        .right-column {
-            padding: .75rem;
-            max-width: 25%;
-        }
-
-        .container {
-            display: flex;
+        input[type=number] {
             width: 100%;
+            padding: 12px 20px;
+            margin: 8px 0;
+            display: inline-block;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            -webkit-transition: .5s;
+            transition: .5s;
+            outline: 0;
+            font-family: 'Open Sans', serif;
+        }
+        #flip {
+            padding: 5px;
+            text-align: center;
         }
 
-        li {
-            margin: 0.75rem;
+        #panel {
+            padding: 50px;
+            display: none;
+            border: solid 1px #c3c3c3;
+            color: #FFFFFF;
+            background-color: #333030;
+            border-radius: 4px;
         }
 
-        .right-section {
-            margin-left: 1rem;
-            padding-left: 0.5rem;
+        #events {
+            border-radius: 0px;
         }
 
-        .right-section h3 {
-            padding-top: 0;
-            font-weight: 200;
-        }
-
-        .right-section ul {
-            border-left: 0.3rem solid #71aeef;
-            list-style-type: none;
-            padding-left: 0;
-        }
-
-        .provided-code {
-            border-left: 0.3rem solid #71aeef;
-            padding-left: 10px;
-        }
-
-        .provided-code h3 {
-            font-weight: 200;
+        #container {
+            border: solid 1px #c3c3c3;
+            border-radius: 6px;
         }
     </style>
-</head>
-<body>
-
-<div class="banner lead">
-    Your new Cloud-Native application is ready!
-</div>
-
-<div class="container">
-    <div class="left-column">
-        <p class="lead"> Congratulations, you have created a new Quarkus cloud application.</p>
-
-        <h2>What is this page?</h2>
-
-        <p>This page is served by Quarkus. The source is in
-            <code>src/main/resources/META-INF/resources/index.html</code>.</p>
-
-        <h2>What are your next steps?</h2>
-
-        <p>If not already done, run the application in <em>dev mode</em> using: <code>./mvnw compile quarkus:dev</code>.
-        </p>
-        <ul>
-            <li>Your static assets are located in <code>src/main/resources/META-INF/resources</code>.</li>
-            <li>Configure your application in <code>src/main/resources/application.properties</code>.</li>
-            <li>Quarkus now ships with a <a href="/q/dev/">Dev UI</a> (available in dev mode only)</li>
-            <li>Play with the provided code located in <code>src/main/java</code>:</li>
-        </ul>
-                <div class="provided-code">
-            <h3>RESTEasy JAX-RS</h3>
-            <p>Easily start your RESTful Web Services</p>
-            <p><code>@Path: <a href="/hello" class="path-link" target="_blank">/hello</a></code></p>
-            <p><a href="https://quarkus.io/guides/getting-started#the-jax-rs-resources" class="guide-link" target="_blank">Related guide section...</a></p>
+    <!-- Load AngularJS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="events_controller.js"></script>
+    <script>
+    $(document).ready(function() {
+        $("#flip").click(function() {
+            $("#panel").slideToggle("slow");
+        });
+        $("#panel").slideDown("slow");
+        $("#events").show("slow");
+    });
+    </script>
+  </head>
+  <body ng-app="EventsManagement" ng-controller="EventsManagementController">
+    <div class="container" id="container">
+        <center><div id="flip"><img src="redhat-logo.png"/></div></center>
+        <div id="panel">
+            <center><h1>Event Submit Panel</h1></center>
+            <p>
+                This application demonstrates publishing message to a Kafka Broker using Quarkus.
+                This simple frontend interacts via REST APIs with the Quarkus Backend.
+            </p>
+            <p>Behind the scenes, we have:
+                <ul>
+                    <li>AMQ Streams and Kafka APIs</li>
+                    <li>RESTEasy powering the REST API</li>
+                    <li>CDI based dependency injection framework</li>
+                    <li>Smallrye Ractive Messaging</li>
+                    <li>Openshift as a Container Platform.</li>
+                    <li>Tekton for CI/CD.</li>
+                </ul>
+            </p>
         </div>
 
+        <div id="events">
+            <center>
+                <h3>Publish a new Event to Kafka</h3>
+                <form ng-submit="publish()">
+                    <div class="row">
+                        <div class="col-4"><input type="text" ng-model="form.id"/></div>
+                        <div class="col-4"><input type="text" placeholder="Message" ng-model="form.message"/></div>
+                        <div class="col-4">
+                            <select name="Severity" ng-model="form.severity">
+                                <option value="NORMAL">NORMAL</option>
+                                <option value="INFO">INFO</option>
+                                <option value="WARNING">WARNING</option>
+                                <option value="ERROR">ERROR</option>
+                                <option value="CRITICAL">CRITICAL</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-4"><input type="submit" value="Publish"/></div>
+                </form>
+            </center>
+        </div>
+
+        <div><center><h1>Powered By: </h1><img src="quarkus-logo.png" style="width:30%;"/><span style="display:inline-block; width: 50px;"></span><img src="openshift.png" style="width:20%;"/></center></div>
+        <span style="display:inline-block; height: 20px;"/>
     </div>
-    <div class="right-column">
-        <div class="right-section">
-            <h3>Application</h3>
-            <ul>
-                <li>GroupId: <code>com.redhat.kafka</code></li>
-                <li>ArtifactId: <code>event-producer</code></li>
-                <li>Version: <code>1.0.0-SNAPSHOT</code></li>
-                <li>Quarkus Version: <code>2.4.1.Final</code></li>
-            </ul>
-        </div>
-        <div class="right-section">
-            <h3>Do you like Quarkus?</h3>
-            <ul>
-                <li>Go give it a star on <a href="https://github.com/quarkusio/quarkus">GitHub</a>.</li>
-            </ul>
-        </div>
-        <div class="right-section">
-            <h3>Selected extensions guides</h3>
-            <ul>
-                <li title="REST endpoint framework implementing JAX-RS and more"><a href="https://quarkus.io/guides/rest-json" target="_blank">RESTEasy JAX-RS guide</a></li>
-            </ul>
-        </div>
-        <div class="right-section">
-            <h3>More reading</h3>
-            <ul>
-                <li><a href="https://quarkus.io/guides/maven-tooling.html" target="_blank">Setup your IDE</a></li>
-                <li><a href="https://quarkus.io/guides/getting-started.html" target="_blank">Getting started</a></li>
-                <li><a href="https://quarkus.io/guides/" target="_blank">All guides</a></li>
-                <li><a href="https://quarkus.io" target="_blank">Quarkus Web Site</a></li>
-            </ul>
-        </div>
-    </div>
-</div>
-</body>
+  </body>
 </html>
