@@ -22,11 +22,10 @@ public class EventProducerResource {
     @Path("/post")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response postEvent(Event event) {
-
+        
         if (event.event_timestamp == null) {
             return Response.status(Status.BAD_REQUEST).build();
         }
-        
         
         try {
             event.setIngestionTimestamp(); // now
@@ -34,7 +33,7 @@ public class EventProducerResource {
         } catch (IllegalStateException e) {
             return Response.status(Status.INTERNAL_SERVER_ERROR).build();
         }
-        System.out.println(event);
-        return Response.ok().build();
+
+        return Response.ok().header("APIState", "PUBLISH_OK").build();
     }
 }
