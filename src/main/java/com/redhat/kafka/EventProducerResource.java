@@ -14,7 +14,7 @@ import org.eclipse.microprofile.reactive.messaging.Emitter;
 
 @Path("/producer")
 public class EventProducerResource {
-
+    
     @Channel("event-input-topic")
     Emitter<Event> eventGenerator;
 
