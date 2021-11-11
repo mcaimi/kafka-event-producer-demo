@@ -59,7 +59,7 @@ public class EventProducerService {
     // send message to kafka broker
     public Future<Void> publishMessage(Event event) {
         KafkaProducerRecord<String, Event> record = KafkaProducerRecord.create(kafkaTopic, event.id.toString(), event);
-        System.out.println(record);
+
         try {
             return kafkaProducer.write(record);
         } catch (Exception e) {
