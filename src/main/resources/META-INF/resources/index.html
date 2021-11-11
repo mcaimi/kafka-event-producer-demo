@@ -18,6 +18,7 @@
             outline: 0;
             font-family: 'Open Sans', serif;
         }
+        
         #flip {
             padding: 5px;
             text-align: center;
@@ -57,7 +58,7 @@
   </head>
   <body ng-app="EventsManagement" ng-controller="EventsManagementController">
     <div class="container" id="container">
-        <center><div id="flip"><img src="redhat-logo.png"/></div></center>
+        <center><div id="flip"><img src="redhat-logo.png"/><img src="kafka.png" style="width:30%"/></div></center>
         <div id="panel">
             <center><h1>Event Submit Panel</h1></center>
             <p>
@@ -68,7 +69,7 @@
                 <ul>
                     <li>AMQ Streams and Kafka APIs</li>
                     <li>RESTEasy powering the REST API</li>
-                    <li>CDI based dependency injection framework</li>
+                    <li>Vert.x Kafka Client</li>
                     <li>Smallrye Ractive Messaging</li>
                     <li>Openshift as a Container Platform.</li>
                     <li>Tekton for CI/CD.</li>
@@ -76,10 +77,10 @@
             </p>
         </div>
 
-        <div id="events">
+        <div id="events-smallrye">
             <center>
-                <h3>Publish a new Event to Kafka</h3>
-                <form ng-submit="publish()">
+                <h3>Publish a new Event to Kafka (Microprofile Route)</h3>
+                <form ng-submit="publish('producer')">
                     <div class="row">
                         <div class="col-4"><input type="text" ng-model="form.id"/></div>
                         <div class="col-4"><input type="text" placeholder="Message" ng-model="form.message"/></div>
@@ -93,12 +94,34 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-4"><input type="submit" value="Publish"/></div>
+                    <div class="col-4"><input type="submit" value="Publish via Smallrye"/></div>
                 </form>
             </center>
         </div>
 
-        <div><center><h1>Powered By: </h1><img src="quarkus-logo.png" style="width:30%;"/><span style="display:inline-block; width: 50px;"></span><img src="openshift.png" style="width:20%;"/></center></div>
+        <div id="events-vertx">
+            <center>
+                <h3>Publish a new Event to Kafka (Vertx Route)</h3>
+                <form ng-submit="publish('vertx')">
+                    <div class="row">
+                        <div class="col-4"><input type="text" ng-model="vform.id"/></div>
+                        <div class="col-4"><input type="text" placeholder="Message" ng-model="vform.message"/></div>
+                        <div class="col-4">
+                            <select name="Severity" ng-model="vform.severity">
+                                <option value="NORMAL">NORMAL</option>
+                                <option value="INFO">INFO</option>
+                                <option value="WARNING">WARNING</option>
+                                <option value="ERROR">ERROR</option>
+                                <option value="CRITICAL">CRITICAL</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-4"><input type="submit" value="Publish via Vertx"/></div>
+                </form>
+            </center>
+        </div>
+
+        <div><center><h1>Powered By: </h1><img src="quarkus-logo.png" style="width:30%;"/><span style="display:inline-block; width: 50px;"></span><img src="openshift.png" style="width:20%;"/><span style="display:inline-block; width: 50px;"></span><img src="vertx.svg" style="width:15%;"/></center></div>
         <span style="display:inline-block; height: 20px;"/>
     </div>
   </body>

@@ -20,25 +20,36 @@ app.controller("EventsManagementController", function ($scope, $http) {
     message: "",
     severity: ""
   };
+  $scope.vform = {
+    id: create_UUID(),
+    message: "",
+    severity: ""
+  }
 
   // HTTP POST Handler: Publish a new event
-  $scope.publish = function () {
+  $scope.publish = function (routeType) {
     var method = "";
     var url = "";
     var data = {};
 
     // POST operation
     method = "POST";
-    url = '/producer/post';
-    data.id = $scope.form.id;
-    data.message = $scope.form.message;
-    data.severity = $scope.form.severity;
+    if (routeType == 'producer') {
+      url = "/producer/post";
+      data.id = $scope.form.id;
+      data.message = $scope.form.message;
+      data.severity = $scope.form.severity;
+    } else {
+      url = "/vertx/post";
+      data.id = $scope.vform.id;
+      data.message = $scope.vform.message;
+      data.severity = $scope.vform.severity;
+    } 
     data.event_timestamp = new Date().getTime().toString();
-
 
     $http({
       method: method,
-      url: url,
+      url: url.toString(),
       data: angular.toJson(data),
       headers: {
         'Content-Type': 'application/json'
@@ -59,5 +70,8 @@ app.controller("EventsManagementController", function ($scope, $http) {
     $scope.form.message = "";
     $scope.form.severity = "";
     $scope.form.id = create_UUID();
+    $scope.vform.message = "";
+    $scope.vform.severity = "";
+    $scope.vform.id = create_UUID();
   }
 });
