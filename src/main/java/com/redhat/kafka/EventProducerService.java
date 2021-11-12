@@ -24,16 +24,16 @@ public class EventProducerService {
     // read properties from configuration file
     // as Vertx does not do it automatically via CDI
     @ConfigProperty(name = "kafka.bootstrap.servers")
-    private String kafkaServers;
+    protected String kafkaServers;
 
-    @ConfigProperty(name = "kafka.producer.topic")
-    private String kafkaTopic;
+    @ConfigProperty(name = "vertx.producer.topic")
+    protected String kafkaTopic;
 
-    @ConfigProperty(name = "kafka.producer.topic.key.serializer")
-    private String keySerializer;
+    @ConfigProperty(name = "vertx.producer.topic.key.serializer")
+    protected String keySerializer;
 
-    @ConfigProperty(name = "kafka.producer.topic.value.serializer")
-    private String valueSerializer;
+    @ConfigProperty(name = "vertx.producer.topic.value.serializer")
+    protected String valueSerializer;
 
     // inject Vertx
     @Inject
