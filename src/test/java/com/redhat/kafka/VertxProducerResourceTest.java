@@ -1,5 +1,6 @@
 package com.redhat.kafka;
 
+import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;
 
@@ -10,6 +11,7 @@ import java.util.Date;
 import java.util.UUID;;
 
 @QuarkusTest
+@QuarkusTestResource(EmbeddedKafkaResource.class)
 public class VertxProducerResourceTest {
 
     @Test
