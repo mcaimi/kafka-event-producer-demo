@@ -67,6 +67,35 @@ You can then execute your native executable with: `./target/consumer-1.0.0-SNAPS
 
 If you want to learn more about building native executables, please consult https://quarkus.io/guides/maven-tooling.html.
 
+## Building the artifact using Tekton on Openshift Container Platform
+
+This example pipeline needs Nexus to store the Java artifact (the pipeline produces an _über-jar_).
+Please follow the steps described [here](https://github.com/mcaimi/k8s-demo-app) to deploy an instance of Sonatype Nexus on Openshift.
+
+### Install and run tekton pipeline manifests
+
+1. Create a new project:
+
+```bash
+$ oc new-project kafka-event-producer-demo
+```
+
+2. Install tekton pipeline components:
+
+```bash
+for i in pipeline-resources build-pvc quarkus-maven-task quarkus-nexus-task quarkus-maven-pipeline; do
+  oc create -f tekton/$i.yaml -n kafka-event-producer-demo
+done
+```
+
+3. Run the pipeline
+
+```bash
+$ oc create -f tekton/quarkus-maven-pipelinerun.yaml -n kafka-event-producer-demo
+```
+
+![OCP Pipeline Run](/assets/pipeline-run.png)
+
 ## Related Guides
 
 - RESTEasy JAX-RS ([guide](https://quarkus.io/guides/rest-json)): REST endpoint framework implementing JAX-RS and more
