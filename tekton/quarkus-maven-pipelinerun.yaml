@@ -1,0 +1,23 @@
+---
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineRun
+metadata:
+  generateName: kafka-producer-tekton-run-
+spec:
+  pipelineRef:
+    name: kafka-event-producer-maven-pipeline
+  resources:
+  - name: kafka-event-producer-github-repo
+    resourceRef:
+      name: kafka-event-producer-github-repo
+  params:
+    - name: artifact_id
+      value: "com.redhat.kafka:event-producer:1.0.0-SNAPSHOT"
+    - name: nexus_url
+      value: "nexus.apps.lab01.gpslab.club"
+    - name: credentials
+      value: "jenkins-nexus:redhat123"
+  workspaces:
+  - name: quarkus-maven-repo
+    persistentVolumeClaim:
+      claimName: maven-repo-pvc

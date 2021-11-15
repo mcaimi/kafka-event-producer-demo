@@ -1,0 +1,99 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Pipeline
+metadata:
+  name: kafka-event-producer-maven-pipeline
+spec:
+  workspaces:
+  - name: quarkus-maven-repo
+  resources:
+  - name: kafka-event-producer-github-repo
+    type: git
+  params:
+    - name: artifact_id
+      type: string
+      description: The ajava artifact id that is put on nexus after a successful build
+      default: "com.redhat.kafka:event-producer:1.0.0-SNAPSHOT"
+    - name: nexus_url
+      type: string
+      description: URL of the Nexus Server
+      default: "nexus.apps.kubernetes.local"
+    - name: credentials
+      type: string
+      description: Credentials to use when authenticating on Nexus
+      default: "jenkins-nexus:redhat123"
+  tasks:
+  - name: build
+    taskRef:
+      name: quarkus-maven-task
+    resources:
+      inputs:
+      - name: source
+        resource: kafka-event-producer-github-repo
+    params:
+    - name: GOALS
+      value: ["-DskipTests=true", "compile"]
+    workspaces:
+    - name: maven-repo
+      workspace: quarkus-maven-repo
+
+  - name: test
+    taskRef:
+      name: quarkus-maven-task
+    runAfter: ["build"]
+    resources:
+      inputs:
+      - name: source
+        resource: kafka-event-producer-github-repo
+    params:
+    - name: GOALS
+      value: ["test"]
+    workspaces:
+    - name: maven-repo
+      workspace: quarkus-maven-repo
+
+  - name: jacoco
+    taskRef:
+      name: quarkus-maven-task
+    runAfter: ["test"]
+    resources:
+      inputs:
+      - name: source
+        resource: kafka-event-producer-github-repo
+    params:
+    - name: GOALS
+      value: ["verify", "jacoco:report"]
+    workspaces:
+    - name: maven-repo
+      workspace: quarkus-maven-repo
+
+  - name: package
+    taskRef:
+      name: quarkus-maven-task
+    runAfter: ["test"]
+    resources:
+      inputs:
+      - name: source
+        resource: kafka-event-producer-github-repo
+    params:
+    - name: GOALS
+      value: ["-DskipTests=true", "package"]
+    workspaces:
+    - name: maven-repo
+      workspace: quarkus-maven-repo
+
+  - name: upload-artifact
+    taskRef:
+      name: quarkus-nexus-task
+    runAfter: ["package", "jacoco"]
+    resources:
+      inputs:
+      - name: source
+        resource: kafka-event-producer-github-repo
+    params:
+    - name: GOALS
+      value: ["deploy"]
+    - name: SETTINGS_PATH
+      value: "conf/settings.xml"
+    workspaces:
+    - name: maven-repo
+      workspace: quarkus-maven-repo
