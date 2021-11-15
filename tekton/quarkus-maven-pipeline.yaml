@@ -61,7 +61,7 @@ spec:
         resource: kafka-event-producer-github-repo
     params:
     - name: GOALS
-      value: ["verify", "jacoco:report"]
+      value: ["test", "jacoco:report"]
     workspaces:
     - name: maven-repo
       workspace: quarkus-maven-repo
@@ -76,7 +76,7 @@ spec:
         resource: kafka-event-producer-github-repo
     params:
     - name: GOALS
-      value: ["-DskipTests=true", "package"]
+      value: ["-DskipTests=true", "package", "-Dquarkus.package.type=uber-jar"]
     workspaces:
     - name: maven-repo
       workspace: quarkus-maven-repo
@@ -91,7 +91,7 @@ spec:
         resource: kafka-event-producer-github-repo
     params:
     - name: GOALS
-      value: ["deploy"]
+      value: ["-DskipTests=true", "deploy"]
     - name: SETTINGS_PATH
       value: "conf/settings.xml"
     workspaces:
