@@ -10,6 +10,7 @@
     <maven.compiler.parameters>true</maven.compiler.parameters>
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
+    <jacoco.version>0.8.7</jacoco.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
@@ -17,6 +18,7 @@
     <quarkus.platform.version>2.4.1.Final</quarkus.platform.version>
     <surefire-plugin.version>3.0.0-M5</surefire-plugin.version>
   </properties>
+
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -28,6 +30,20 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
+
+  <distributionManagement>
+    <snapshotRepository>
+      <id>nexus-snapshots</id>
+      <name>Sonatype On Openshift 4</name>
+      <url>http://nexus.apps.lab01.gpslab.club/repository/maven-snapshots/</url>
+    </snapshotRepository>
+    <repository>
+      <id>nexus-release</id>
+      <name>Sonatype On Openshift 4</name>
+      <url>http://nexus.apps.lab01.gpslab.club/repository/maven-releases/</url>
+    </repository>
+  </distributionManagement>
+
   <dependencies>
     <dependency>
       <groupId>io.vertx</groupId>
@@ -107,6 +123,30 @@
             <maven.home>${maven.home}</maven.home>
           </systemPropertyVariables>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>${jacoco.version}</version>
+        <executions>
+          <execution>
+            <id>default-prepare-agent</id>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>report</id>
+            <phase>test</phase>
+            <goals>
+              <goal>report</goal>
+            </goals>
+            <configuration>
+              <dataFile>${project.build.directory}/jacoco.exec</dataFile>
+              <outputDirectory>${project.reporting.outputDirectory}/jacoco</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
