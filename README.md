@@ -80,10 +80,20 @@ Please follow the steps described [here](https://github.com/mcaimi/k8s-demo-app)
 $ oc new-project kafka-event-producer-demo
 ```
 
-2. Install tekton pipeline components:
+2. Install tekton pipeline objects:
+
+For the compile-test-archive pipeline:
 
 ```bash
-for i in pipeline-resources build-pvc quarkus-maven-task quarkus-nexus-task quarkus-maven-pipeline; do
+for i in pipeline-resources maven-pvc quarkus-maven-task quarkus-nexus-task quarkus-maven-pipeline; do
+  oc create -f tekton/$i.yaml -n kafka-event-producer-demo
+done
+```
+
+For the container image build pipeline:
+
+```bash
+for i in build-pvc quarkus-build-task quarkus-build-pipeline; do
   oc create -f tekton/$i.yaml -n kafka-event-producer-demo
 done
 ```
@@ -123,8 +133,11 @@ curl -v http://localhost:8080/vertx/post -XPOST -d'{ "id": "1c51a259-29e7-454d-b
 curl -v http://localhost:8080/producer/post -XPOST -d'{ "id": "1c51a259-29e7-454d-b9dc-b7616d727ff1", "message": "TestMessageJUnit", "severity": 1, "event_timestamp": 1636720919565 }' -H 'Content-Type: application/json'
 ```
 
-### RESTEasy JAX-RS
+###  Notes
 
-Easily start your RESTful Web Services
+Container image build pipelines currently require the privileged SCC to be attached to the 'pipeline' ServiceAccount in order to successfully run:
 
-[Related guide section...](https://quarkus.io/guides/getting-started#the-jax-rs-resources)
+```bash
+oc adm add-scc-to-user privileged -z system:serviceaccount:kafka-event-producer-demo:pipeline
+```
+
