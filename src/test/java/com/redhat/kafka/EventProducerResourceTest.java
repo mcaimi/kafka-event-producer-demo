@@ -16,7 +16,7 @@ import java.util.UUID;
 public class EventProducerResourceTest {
 
     @Test
-    public void testMicroprofilePublishEndpoint() {
+    public void testMicroprofileEndpoint() {
 
         String requestBody = "{ \"id\": \"ID\", \"message\": \"MSG\", \"severity\": SEV, \"event_timestamp\": TS }";
         Long timestamp = new Date().getTime();
@@ -39,5 +39,30 @@ public class EventProducerResourceTest {
           .then()
              .statusCode(200)
              .header("APIState", equalTo("PUBLISH_OK"));
+    }
+
+    @Test
+    public void testMicroprofileWrongPayload(){
+        // timestamp is missing, this is an error
+        String requestBody = "{ \"id\": \"ID\", \"message\": \"MSG\", \"severity\": SEV }";
+
+        System.out.println(requestBody
+                .replace("ID", UUID.randomUUID().toString())
+                .replace("MSG", "TestMessageJUnit")
+                .replace("SEV", "1")
+                );
+        
+        given()
+          .when()
+          .body(requestBody
+                .replace("ID", UUID.randomUUID().toString())
+                .replace("MSG", "TestMessageJUnit")
+                .replace("SEV", "1")
+                )
+          .contentType("application/json")
+          .post("/producer/post")
+          .then()
+             .statusCode(400)
+             .header("APIState", equalTo("Missing timestamp from message payload"));
     }
 }

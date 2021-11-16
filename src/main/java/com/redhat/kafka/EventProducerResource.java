@@ -30,7 +30,7 @@ public class EventProducerResource {
 
         // refuse events without timestamp
         if (event.event_timestamp == null) {
-            return Response.status(Status.BAD_REQUEST).build();
+            return Response.status(Status.BAD_REQUEST).header("APIState", "Missing timestamp from message payload").build();
         }
         
         // send to topic
@@ -40,7 +40,7 @@ public class EventProducerResource {
             // send
             eventGenerator.send(event);
         } catch (IllegalStateException e) {
-            return Response.status(Status.INTERNAL_SERVER_ERROR).build();
+            return Response.status(Status.INTERNAL_SERVER_ERROR).header("APIState", "Internal Server Error").build();
         }
 
         // return OK

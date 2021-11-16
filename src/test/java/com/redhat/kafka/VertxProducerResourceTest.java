@@ -39,4 +39,29 @@ public class VertxProducerResourceTest {
              .statusCode(200)
              .header("APIState", equalTo("VERTX_PUBLISH_OK"));
     }
+
+    @Test
+    public void testVertxWrongPayload(){
+        // timestamp is missing, this is an error
+        String requestBody = "{ \"id\": \"ID\", \"message\": \"MSG\", \"severity\": SEV }";
+
+        System.out.println(requestBody
+                .replace("ID", UUID.randomUUID().toString())
+                .replace("MSG", "TestMessageJUnit")
+                .replace("SEV", "1")
+                );
+        
+        given()
+          .when()
+          .body(requestBody
+                .replace("ID", UUID.randomUUID().toString())
+                .replace("MSG", "TestMessageJUnit")
+                .replace("SEV", "1")
+                )
+          .contentType("application/json")
+          .post("/vertx/post")
+          .then()
+             .statusCode(400)
+             .header("APIState", equalTo("Missing timestamp from message payload"));
+    }
 }
