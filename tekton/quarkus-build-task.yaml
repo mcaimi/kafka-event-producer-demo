@@ -1,0 +1,56 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: quarkus-build-task
+spec:
+  workspaces:
+    - name: maven-repo
+  inputs:
+    resources:
+      - name: source
+        type: git
+    params:
+      - name: TLS_VERIFY
+        description: Verify the TLS on the registry endpoint (for push/pull to a non-TLS registry)
+        default: "false"
+        type: string
+      - name: dockerfilePath
+        type: string
+        description: Relative path under which the Dockerfile is located
+        default: "src/main/docker"
+  outputs:
+    resources:
+      - name: image
+        type: image
+  steps:
+    - name: maven-package-final
+      image: gcr.io/cloud-builders/mvn
+      workingDir: /workspace/source
+      command: ["/usr/bin/mvn"]
+      args:
+        - -Dmaven.repo.local=$(workspaces.maven-repo.path)
+        - -DskipTests=true
+        - package
+
+    - name: buildah-build
+      image: quay.io/buildah/stable
+      workingdir: /workspace/source
+      command: ['buildah', 'bud',  '--tls-verify=$(inputs.params.TLS_VERIFY)', '--layers', '-f', '$(params.dockerfilePath)/Dockerfile.jvm', '-t', '$(outputs.resources.image.url)', '.']
+      volumeMounts:
+        - name: varlibcontainers
+          mountPath: /var/lib/containers
+      securityContext:
+        privileged: true
+
+    - name: buildah-push
+      image: quay.io/buildah/stable
+      command: ['buildah', 'push', '--tls-verify=$(inputs.params.TLS_VERIFY)', '$(outputs.resources.image.url)', 'docker://$(outputs.resources.image.url)']
+      volumeMounts:
+        - name: varlibcontainers
+          mountPath: /var/lib/containers
+      securityContext:
+        privileged: true
+  volumes:
+    - name: varlibcontainers
+      emptyDir: {}
+

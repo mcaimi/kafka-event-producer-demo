@@ -1,0 +1,41 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Pipeline
+metadata:
+  name: kafka-event-producer-build-pipeline
+spec:
+  workspaces:
+  - name: quarkus-maven-repo
+
+  resources:
+  - name: kafka-event-producer-github-repo
+    type: git
+  - name: output-runnable-image
+    type: image
+
+  params:
+    - name: dockerfilePath
+      type: string
+      description: Path containing the Dockerfile for the final image
+      default: "src/main/docker"
+
+  tasks:
+  - name: build-container-image
+    taskRef:
+      name: quarkus-build-task
+    params:
+      - name: TLS_VERIFY
+        value: "false"
+      - name: dockerfilePath
+        value: "src/main/docker"
+    resources:
+      inputs:
+      - name: source
+        resource: kafka-event-producer-github-repo
+      outputs:
+      - name: image
+        resource: output-runnable-image
+    workspaces:
+    - name: maven-repo
+      workspace: quarkus-maven-repo
+
+

@@ -2,7 +2,7 @@
 apiVersion: tekton.dev/v1alpha1
 kind: PipelineResource
 metadata:
-  name: kafka-event-producer
+  name: kafka-event-producer-image
 spec:
   type: image
   params:
