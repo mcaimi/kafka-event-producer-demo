@@ -1,0 +1,8 @@
+apiVersion: operator.tekton.dev/v1alpha1
+kind: TektonConfig
+metadata:
+  name: config
+  namespace: operators
+spec:
+  profile: all
+  targetNamespace: tekton-pipelines
