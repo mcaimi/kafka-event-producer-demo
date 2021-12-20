@@ -6,13 +6,13 @@
   <servers>
     <server>
       <id>nexus-snapshots</id>
-      <username>jenkins-nexus</username>
-      <password>redhat123</password>
+      <username>nexus</username>
+      <password>r3dh4t123!</password>
     </server>
     <server>
       <id>nexus-release</id>
-      <username>jenkins-nexus</username>
-      <password>redhat123</password>
+      <username>nexus</username>
+      <password>r3dh4t123!</password>
     </server>
   </servers>
   <mirrors/>
