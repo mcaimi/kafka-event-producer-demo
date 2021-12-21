@@ -20,3 +20,14 @@ spec:
     value: https://github.com/mcaimi/kafka-event-producer-demo
   - name: revision
     value: master
+---
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: kafka-event-producer-image-minikube
+spec:
+  type: image
+  params:
+  - name: url
+    value: registry.kube-system.svc.cluster.local/event-producer
+

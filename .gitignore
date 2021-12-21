@@ -39,3 +39,4 @@ nb-configuration.xml
 .env
 tekton/runtest.yaml
 tekton/runbuild.yaml
+tekton/runbuild-minikube.yaml
