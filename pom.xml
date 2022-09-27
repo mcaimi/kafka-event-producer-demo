@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+<project xsi:schemaLocation="ttp://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.redhat.kafka</groupId>
@@ -35,12 +35,12 @@
     <snapshotRepository>
       <id>nexus-snapshots</id>
       <name>Sonatype On Openshift 4</name>
-      <url>http://nexus.apps.kubernetes.local/repository/maven-snapshots/</url>
+      <url>http://nexus-nexus-repo.apps.cluster-jk9lf.sandbox2121.opentlc.com/repository/maven-snapshots/</url>
     </snapshotRepository>
     <repository>
       <id>nexus-release</id>
       <name>Sonatype On Openshift 4</name>
-      <url>http://nexus.apps.kubernetes.local/repository/maven-releases/</url>
+      <url>http://nexus-nexus-repo.apps.cluster-jk9lf.sandbox2121.opentlc.com/repository/maven-releases/</url>
     </repository>
   </distributionManagement>
 
