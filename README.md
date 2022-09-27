@@ -108,7 +108,7 @@ $ kubectl apply -f minikube/tektoncd/tekton-config.yaml (K8s < 1.22 only)
 1. Create a new project:
 
 ```bash
-$ oc new-project kafka-event-producer-demo
+$ oc new-project quarkus-producer
 ```
 
 2. Install tekton pipeline objects:
@@ -117,7 +117,7 @@ For the compile-test-archive pipeline:
 
 ```bash
 for i in pipeline-resources maven-pvc quarkus-maven-task quarkus-nexus-task quarkus-maven-pipeline; do
-  oc create -f tekton/$i.yaml -n kafka-event-producer-demo
+  oc create -f tekton/$i.yaml -n quarkus-producer
 done
 ```
 
@@ -125,14 +125,14 @@ For the container image build pipeline:
 
 ```bash
 for i in build-pvc quarkus-build-task quarkus-build-pipeline; do
-  oc create -f tekton/$i.yaml -n kafka-event-producer-demo
+  oc create -f tekton/$i.yaml -n quarkus-producer
 done
 ```
 
 3. Run the pipeline
 
 ```bash
-$ oc create -f tekton/quarkus-maven-pipelinerun.yaml -n kafka-event-producer-demo
+$ oc create -f tekton/quarkus-maven-pipelinerun.yaml -n quarkus-producer
 ```
 
 ![OCP Pipeline Run](/assets/pipeline-run.png)
@@ -169,6 +169,6 @@ curl -v http://localhost:8080/producer/post -XPOST -d'{ "id": "1c51a259-29e7-454
 Container image build pipelines currently require the privileged SCC to be attached to the 'pipeline' ServiceAccount in order to successfully run:
 
 ```bash
-oc adm add-scc-to-user privileged -z system:serviceaccount:kafka-event-producer-demo:pipeline
-```
+oc adm policy add-scc-to-user privileged -z pipeline
+``
 

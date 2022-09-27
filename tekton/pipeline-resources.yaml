@@ -19,7 +19,7 @@ spec:
   - name: url
     value: https://github.com/mcaimi/kafka-event-producer-demo
   - name: revision
-    value: master
+    value: native
 ---
 apiVersion: tekton.dev/v1alpha1
 kind: PipelineResource
