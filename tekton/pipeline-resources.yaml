@@ -7,7 +7,7 @@ spec:
   type: image
   params:
   - name: url
-    value: image-registry.openshift-image-registry.svc:5000/kafka-event-producer-demo/event-producer
+    value: image-registry.openshift-image-registry.svc:5000/quarkus-producer/event-producer
 ---
 apiVersion: tekton.dev/v1alpha1
 kind: PipelineResource
