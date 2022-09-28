@@ -1,0 +1,20 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kafka-demo
+  namespace: openshift-gitops
+spec:
+  project: kafka-demo
+  source:
+    repoURL: https://github.com/mcaimi/kafka-event-producer-demo.git
+    targetRevision: native
+    path: openshift/kafka-cluster
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kafka-demo
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+
