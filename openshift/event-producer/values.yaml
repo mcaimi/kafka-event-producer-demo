@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-  repository: registry.kube-system.svc.cluster.local/event-producer
+  repository: image-registry.openshift-image-registry.svc:5000/quarkus-producer/event-producer
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: "latest"
@@ -32,7 +32,8 @@ podAnnotations: {}
 podSecurityContext: {}
   # fsGroup: 2000
 
-securityContext: {}
+securityContext:
+  runAsUser: 1001
   # capabilities:
   #   drop:
   #   - ALL
@@ -44,21 +45,10 @@ service:
   type: ClusterIP
   port: 8080
 
-ingress:
+route:
   enabled: true
-  className: "nginx"
-  annotations:
-    kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
-  hosts:
-    - host: event-producer.apps.kubernetes.local
-      paths:
-        - path: /
-          pathType: ImplementationSpecific
-  tls: []
-  #  - secretName: chart-example-tls
-  #    hosts:
-  #      - chart-example.local
+  host: event-producer.apps.cluster-jk9lf.sandbox2121.opentlc.com
+  tls: true
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
