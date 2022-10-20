@@ -67,40 +67,28 @@ You can then execute your native executable with: `./target/consumer-1.0.0-SNAPS
 
 If you want to learn more about building native executables, please consult https://quarkus.io/guides/maven-tooling.html.
 
-## Building the artifact using Tekton on Openshift Container Platform (or Kubernetes)
+## Building the artifact using Tekton on Openshift Container Platform
 
 This example pipeline needs Nexus to store the Java artifact (the pipeline produces an _über-jar_).
-Please follow the steps described [here](https://github.com/mcaimi/k8s-demo-app) to deploy an instance of Sonatype Nexus on Openshift/Minikube.
+Please follow the steps described [here](https://github.com/mcaimi/k8s-demo-app) to deploy an instance of Sonatype Nexus on Openshift.
 
-### Running the example on Minikube
+### Running the example
 
-To run the demo on Minikube a local minikube cluster with 4vCPU and 8GB of RAM is required. Also, be sure to enable the ingress and OLM addons when deploying the instance.
+1. Install the AMQ Streams, GitOps and Pipeline Operators from the OCP Web Console
 
-1. Install the Strimzi Operator for Kafka
+2. Deploy a Kafka cluster and demo topics
 
 ```bash
-$ kubectl apply -f minikube/operators/strimzi.yaml
+$ oc apply -f openshift/kafka-cluster/namespace.yaml
+$ oc apply -f openshift/kafka-cluster/demo-cluster-minikube.yaml
+$ oc apply -f openshift/kafka-cluster/demo-topic-minikube.yaml
 ```
 
-2. Install the Tekton CD Operator
+3. Optionally deploy ArgoCD descriptors for both the Application and Kafka Cluster
 
 ```bash
-$ kubectl apply -f minikube/operators/tekton-olm.yaml (K8s < 1.22)
-$ kubectl apply -f minikube/operators/tekton-operator-github.yaml (K8s > 1.22+)
-```
-
-3. Deploy a demo cluster and topic
-
-```bash
-$ kubectl apply -f minikube/kafka-cluster/namespace.yaml
-$ kubectl apply -f minikube/kafka-cluster/demo-cluster-minikube.yaml
-$ kubectl apply -f minikube/kafka-cluster/demo-topic-minikube.yaml
-```
-
-4. Deploy Tekton Pipelines and Dashboard
-
-```bash
-$ kubectl apply -f minikube/tektoncd/tekton-config.yaml (K8s < 1.22 only)
+$ oc apply -k openshift/kafka-argocd/
+$ oc apply -k openshift/producer-argocd/
 ```
 
 ### Install and run tekton pipeline manifests
