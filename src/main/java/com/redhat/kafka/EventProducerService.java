@@ -3,6 +3,7 @@ package com.redhat.kafka;
 // import basic libraries
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -35,6 +36,24 @@ public class EventProducerService {
     @ConfigProperty(name = "vertx.producer.topic.value.serializer")
     protected String valueSerializer;
 
+    @ConfigProperty(name = "vertx.producer.authenticated", defaultValue="false")
+    protected boolean producerAuthenticated;
+
+    @ConfigProperty(name = "vertx.producer.username")
+    protected Optional<String> producerUsername;
+
+    @ConfigProperty(name = "vertx.producer.password")
+    protected Optional<String> producerPassword;
+
+    @ConfigProperty(name = "vertx.security.protocol")
+    protected Optional<String> securityProtocol;
+
+    @ConfigProperty(name = "vertx.sasl.mechanism")
+    protected Optional<String> saslMechanism;
+
+    @ConfigProperty(name = "vertx.sasl.loginclass")
+    protected Optional<String> loginClass;
+
     // inject Vertx
     @Inject
     Vertx vertx;
@@ -51,6 +70,14 @@ public class EventProducerService {
         kafkaConfig.put("bootstrap.servers", kafkaServers);
         kafkaConfig.put("key.serializer", keySerializer);
         kafkaConfig.put("value.serializer", valueSerializer);
+
+        // configure SASL-SSL authentication if needed
+        if (producerAuthenticated) {
+          kafkaConfig.put("sasl.jaas.config", loginClass.get() + " required username=" + producerUsername.get() + " password=" + producerPassword.get() + ";");
+          kafkaConfig.put("security.protocol", securityProtocol.get());
+          kafkaConfig.put("sasl.mechanism", saslMechanism.get());
+          kafkaConfig.put("ssl.endpoint.identification.algorithm", "https");
+        }
 
         // build the Kafka Producer client
         kafkaProducer = KafkaProducer.create(vertx, kafkaConfig);
