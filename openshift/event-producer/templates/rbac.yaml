@@ -3,6 +3,7 @@ kind: Role
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: {{ .Values.serviceAccount.name }}-role
+  namespace: {{ .Values.namespace }}
 rules:
   - apiGroups: ["security.openshift.io"]
     resources: ["securitycontextconstraints"]
@@ -14,6 +15,7 @@ kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: {{ .Values.serviceAccount.name }}-binding
+  namespace: {{ .Values.namespace }}
 subjects:
   - kind: ServiceAccount
     name: {{ .Values.serviceAccount.name }}
