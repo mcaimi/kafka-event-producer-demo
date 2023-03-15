@@ -16,7 +16,7 @@ nameOverride: ""
 fullnameOverride: ""
 
 kafka:
-  bootstrap_server: kafka-demo-cluster-kafka-bootstrap.kafka-demo.svc.cluster.local
+  bootstrap_server: kafka-cluster-kafka-bootstrap.kafka-broker.svc.cluster.local
   bootstrap_port: 9092
 
 serviceAccount:
@@ -50,7 +50,7 @@ service:
 
 route:
   enabled: true
-  host: event-producer.apps.cluster-jk9lf.sandbox2121.opentlc.com
+  host: event-producer.apps.cluster-demo.sandbox1163.opentlc.com
   tls: true
 
 resources: {}
