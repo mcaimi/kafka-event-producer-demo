@@ -1,0 +1,22 @@
+---
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineRun
+metadata:
+  generateName: container-build-run-
+spec:
+  pipelineRef:
+    name: kafka-event-producer-build-pipeline
+  resources:
+  - name: kafka-event-producer-github-repo
+    resourceRef:
+      name: kafka-event-producer-github-repo
+  - name: output-runnable-image
+    resourceRef:
+      name: kafka-event-producer-image-minikube
+  params:
+    - name: dockerfilePath
+      value: "src/main/docker"
+  workspaces:
+  - name: quarkus-maven-repo
+    persistentVolumeClaim:
+      claimName: build-pvc

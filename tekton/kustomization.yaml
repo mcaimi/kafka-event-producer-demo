@@ -1,0 +1,20 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+commonLabels:
+  app: quarkus-producer
+  kind: pipeline
+
+namespace: quarkus-producer
+
+resources:
+  - namespace.yaml
+  - permissions.yaml
+  - build-pvc.yaml
+  - maven-pvc.yaml
+  - pipeline-resources.yaml
+  - quarkus-build-pipeline.yaml
+  - quarkus-build-task.yaml
+  - quarkus-maven-pipeline.yaml
+  - quarkus-maven-task.yaml
+  - quarkus-nexus-task.yaml

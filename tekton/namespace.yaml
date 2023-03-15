@@ -1,0 +1,9 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    kubernetes.io/metadata.name: quarkus-producer
+    argocd.argoproj.io/managed-by: openshift-gitops
+  name: quarkus-producer
+
