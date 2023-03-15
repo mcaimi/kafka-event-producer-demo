@@ -69,59 +69,8 @@ If you want to learn more about building native executables, please consult http
 
 ## Building the artifact using Tekton on Openshift Container Platform
 
-This example pipeline needs Nexus to store the Java artifact (the pipeline produces an _über-jar_).
-Please follow the steps described [here](https://github.com/mcaimi/k8s-demo-app) to deploy an instance of Sonatype Nexus on Openshift.
-
-### Running the example
-
-1. Install the AMQ Streams, GitOps and Pipeline Operators from the OCP Web Console
-
-2. Deploy a Kafka cluster and demo topics
-
-```bash
-$ oc apply -f openshift/kafka-cluster/namespace.yaml
-$ oc apply -f openshift/kafka-cluster/demo-cluster-minikube.yaml
-$ oc apply -f openshift/kafka-cluster/demo-topic-minikube.yaml
-```
-
-3. Optionally deploy ArgoCD descriptors for both the Application and Kafka Cluster
-
-```bash
-$ oc apply -k openshift/kafka-argocd/
-$ oc apply -k openshift/producer-argocd/
-```
-
-### Install and run tekton pipeline manifests
-
-1. Create a new project:
-
-```bash
-$ oc new-project quarkus-producer
-```
-
-2. Install tekton pipeline objects:
-
-For the compile-test-archive pipeline:
-
-```bash
-for i in pipeline-resources maven-pvc quarkus-maven-task quarkus-nexus-task quarkus-maven-pipeline; do
-  oc create -f tekton/$i.yaml -n quarkus-producer
-done
-```
-
-For the container image build pipeline:
-
-```bash
-for i in build-pvc quarkus-build-task quarkus-build-pipeline; do
-  oc create -f tekton/$i.yaml -n quarkus-producer
-done
-```
-
-3. Run the pipeline
-
-```bash
-$ oc create -f tekton/quarkus-maven-pipelinerun.yaml -n quarkus-producer
-```
+Please follow the steps described [here](https://github.com/mcaimi/k8s-demo-argocd) to deploy the CI environment.
+The repo contains automation that deploys the CI env, the application manifests and the tektok pipeline used to build the app itself.
 
 ![OCP Pipeline Run](/assets/pipeline-run.png)
 
