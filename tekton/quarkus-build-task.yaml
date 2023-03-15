@@ -7,12 +7,10 @@ spec:
     - name: maven-repo
       mountPath: /workspace/source
   resources:
-    inputs:
-      - name: source
-        type: git
     outputs:
       - name: image
         type: image
+
   params:
     - name: TLS_VERIFY
       description: Verify the TLS on the registry endpoint (for push/pull to a non-TLS registry)
@@ -23,15 +21,6 @@ spec:
       description: Relative path under which the Dockerfile is located
       default: "src/main/docker"
   steps:
-    - name: maven-package-final
-      image: gcr.io/cloud-builders/mvn
-      resources: {}
-      workingDir: /workspace/source
-      command: ["/usr/bin/mvn"]
-      args:
-        - -Dmaven.repo.local=$(workspaces.maven-repo.path)
-        - -DskipTests=true
-        - package
 
     - name: buildah-build
       image: quay.io/buildah/stable

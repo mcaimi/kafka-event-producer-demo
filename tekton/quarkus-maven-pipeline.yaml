@@ -5,33 +5,38 @@ metadata:
 spec:
   workspaces:
   - name: quarkus-maven-repo
+
   resources:
   - name: kafka-event-producer-github-repo
     type: git
+  - name: output-runnable-image
+    type: image
+
   params:
-    - name: artifact_id
+    - name: dockerfilePath
       type: string
-      description: The ajava artifact id that is put on nexus after a successful build
-      default: "com.redhat.kafka:event-producer:1.0.0-SNAPSHOT"
-    - name: nexus_url
-      type: string
-      description: URL of the Nexus Server
-      default: "nexus.apps.kubernetes.local"
-    - name: credentials
-      type: string
-      description: Credentials to use when authenticating on Nexus
-      default: "jenkins-nexus:redhat123"
+      description: Path containing the Dockerfile for the final image
+      default: "src/main/docker"
+
   tasks:
-  - name: build
+  - name: clone
     taskRef:
-      name: quarkus-maven-task
+      name: quarkus-clone-task
     resources:
       inputs:
       - name: source
         resource: kafka-event-producer-github-repo
+    workspaces:
+    - name: maven-repo
+      workspace: quarkus-maven-repo
+
+  - name: build
+    taskRef:
+      name: quarkus-maven-task
+    runAfter: ["clone"]
     params:
     - name: GOALS
-      value: ["-DskipTests=true", "compile"]
+      value: ["-Dmaven.repo.local=$(workspaces.maven-repo.path)", "-DskipTests=true", "compile"]
     workspaces:
     - name: maven-repo
       workspace: quarkus-maven-repo
@@ -40,13 +45,9 @@ spec:
     taskRef:
       name: quarkus-maven-task
     runAfter: ["build"]
-    resources:
-      inputs:
-      - name: source
-        resource: kafka-event-producer-github-repo
     params:
     - name: GOALS
-      value: ["test"]
+      value: ["-Dmaven.repo.local=$(workspaces.maven-repo.path)", "test"]
     workspaces:
     - name: maven-repo
       workspace: quarkus-maven-repo
@@ -55,13 +56,9 @@ spec:
     taskRef:
       name: quarkus-maven-task
     runAfter: ["test"]
-    resources:
-      inputs:
-      - name: source
-        resource: kafka-event-producer-github-repo
     params:
     - name: GOALS
-      value: ["test", "jacoco:report"]
+      value: ["-Dmaven.repo.local=$(workspaces.maven-repo.path)", "jacoco:report"]
     workspaces:
     - name: maven-repo
       workspace: quarkus-maven-repo
@@ -70,30 +67,34 @@ spec:
     taskRef:
       name: quarkus-maven-task
     runAfter: ["test"]
-    resources:
-      inputs:
-      - name: source
-        resource: kafka-event-producer-github-repo
     params:
     - name: GOALS
-      value: ["-DskipTests=true", "package", "-Dquarkus.package.type=uber-jar"]
+      value: ["-Dmaven.repo.local=$(workspaces.maven-repo.path)", "-DskipTests=true", "package"]
     workspaces:
     - name: maven-repo
       workspace: quarkus-maven-repo
 
-  - name: upload-artifact
+  - name: build-container-image
     taskRef:
-      name: quarkus-nexus-task
-    runAfter: ["package", "jacoco"]
-    resources:
-      inputs:
-      - name: source
-        resource: kafka-event-producer-github-repo
+      name: quarkus-build-task
+    runAfter: ["package"]
     params:
-    - name: GOALS
-      value: ["-DskipTests=true", "deploy"]
-    - name: SETTINGS_PATH
-      value: "conf/settings.xml"
+      - name: TLS_VERIFY
+        value: "false"
+      - name: dockerfilePath
+        value: "src/main/docker"
+    resources:
+      outputs:
+      - name: image
+        resource: output-runnable-image
+    workspaces:
+    - name: maven-repo
+      workspace: quarkus-maven-repo
+
+  finally:
+  - name: clean-workspace
+    taskRef:
+      name: cleanup-workspace
     workspaces:
     - name: maven-repo
       workspace: quarkus-maven-repo

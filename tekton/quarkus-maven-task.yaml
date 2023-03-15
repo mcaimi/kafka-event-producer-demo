@@ -11,10 +11,6 @@ spec:
     description: The Maven goals to run
     type: array
     default: ["package"]
-  resources:
-    inputs:
-    - name: source
-      type: git
   steps:
     - name: quarkus-maven
       image: gcr.io/cloud-builders/mvn
