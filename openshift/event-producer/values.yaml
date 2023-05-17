@@ -50,7 +50,7 @@ service:
 
 route:
   enabled: true
-  host: event-producer.apps.cluster-demo.sandbox1163.opentlc.com
+  host: event-producer.apps.labcluster.sandbox1909.opentlc.com
   tls: true
 
 resources: {}
