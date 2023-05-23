@@ -4,9 +4,9 @@ package com.redhat.kafka;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import jakarta.annotation.PostConstruct;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 // import event descriptor class
