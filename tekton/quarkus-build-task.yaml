@@ -6,11 +6,6 @@ spec:
   workspaces:
     - name: maven-repo
       mountPath: /workspace/source
-  resources:
-    outputs:
-      - name: image
-        type: image
-
   params:
     - name: TLS_VERIFY
       description: Verify the TLS on the registry endpoint (for push/pull to a non-TLS registry)
@@ -20,13 +15,16 @@ spec:
       type: string
       description: Relative path under which the Dockerfile is located
       default: "src/main/docker"
-  steps:
+    - name: image-name
+      type: string
+      default: image-registry.openshift-image-registry.svc:5000/quarkus-producer/event-producer
 
+  steps:
     - name: buildah-build
       image: quay.io/buildah/stable
       resources: {}
       workingDir: /workspace/source
-      command: ['buildah', 'bud',  '--tls-verify=$(inputs.params.TLS_VERIFY)', '--layers', '-f', '$(inputs.params.dockerfilePath)/Dockerfile.jvm', '-t', '$(outputs.resources.image.url)', '.']
+      command: ['buildah', 'bud',  '--tls-verify=$(inputs.params.TLS_VERIFY)', '--layers', '-f', '$(inputs.params.dockerfilePath)/Dockerfile.jvm', '-t', '$(inputs.params.image-name)', '.']
       volumeMounts:
         - name: varlibcontainers
           mountPath: /var/lib/containers
@@ -36,7 +34,7 @@ spec:
     - name: buildah-push
       image: quay.io/buildah/stable
       resources: {}
-      command: ['buildah', 'push', '--tls-verify=$(inputs.params.TLS_VERIFY)', '$(outputs.resources.image.url)', 'docker://$(outputs.resources.image.url)']
+      command: ['buildah', 'push', '--tls-verify=$(inputs.params.TLS_VERIFY)', '$(inputs.params.image-name)', 'docker://$(inputs.params.image-name)']
       volumeMounts:
         - name: varlibcontainers
           mountPath: /var/lib/containers
