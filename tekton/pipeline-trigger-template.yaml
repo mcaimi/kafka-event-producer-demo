@@ -1,0 +1,38 @@
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: TriggerTemplate
+metadata:
+  name: event-producer-tekton-trigger-template
+spec:
+  params:
+    - name: git-revision
+      description: The git branch to build from 
+      default: native
+    - name: git-url
+      description: The git repository url
+    - name: k8s-namespace
+      description: the namespace in which to create the resources
+  resourcetemplates:
+    - apiVersion: tekton.dev/v1beta1
+      kind: PipelineRun
+      metadata:
+        generateName: event-producer-build-
+        namespace: $(tt.params.k8s-namespace)
+      spec:
+        serviceAccountName: pipeline
+        timeout: 1h0m0s
+        pipelineRef:
+          name: kafka-event-producer-maven-pipeline
+        params:
+        - name: git-revision
+          value: $(tt.params.git-revision)
+        - name: git-url
+          value: $(tt.params.git-url)
+        - name: dockerfilePath
+          value: src/main/docker
+        - name: image-name
+          value: >-
+            image-registry.openshift-image-registry.svc:5000/$(tt.params.k8s-namespace)/event-consumer:latest
+        workspaces:
+        - name: quarkus-maven-repo
+          persistentVolumeClaim:
+            claimName: maven-repo-pvc

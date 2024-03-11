@@ -15,3 +15,6 @@ resources:
   - quarkus-maven-pipeline.yaml
   - quarkus-maven-task.yaml
   - cleanup-workspace-task.yaml
+  - pipeline-event-listener.yaml
+  - pipeline-trigger-binding.yaml
+  - pipeline-trigger-template.yaml

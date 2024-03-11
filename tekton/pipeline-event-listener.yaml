@@ -1,0 +1,11 @@
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: EventListener
+metadata:
+  name: event-producer-tekton-event-listener
+spec:
+  serviceAccountName: pipeline
+  triggers:
+    - bindings:
+      - ref: event-producer-tekton-trigger-binding
+      template:
+        ref: event-producer-tekton-trigger-template
